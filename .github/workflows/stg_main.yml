@@ -21,6 +21,7 @@ on:
     branches:
       - main
       - issue_skal
+      - test
 
 env:
   RUBY_ENV: "development"

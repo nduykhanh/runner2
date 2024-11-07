@@ -21,6 +21,7 @@ on:
     branches:
       - main
       - issue_skal
+      - test
   schedule:
     - cron: "40 17 * * 0" # 毎週日曜日 02時40分（JST）
 
