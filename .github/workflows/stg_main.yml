@@ -1,0 +1,51 @@
+name: stg_skal_run_crawler
+
+on:
+  workflow_dispatch:
+    inputs:
+      url_input:
+        description: 'Enter the URL'
+        required: false
+        default: ''
+      max_urls:
+        description: 'Maximum number of URLs'
+        required: true
+        default: 'All'
+        type: choice
+        options:
+          - '10'
+          - '100'
+          - '1000'
+          - 'All'
+  push:
+    branches:
+      - main
+      - issue_skal
+
+env:
+  RUBY_ENV: "development"
+  CACHE_KEY: stg-main-20241101
+  SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
+
+jobs:
+  crawler_job:
+    runs-on: [self-hosted, linux, x64, gh-runner]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.MY_GITHUB_PAT }}
+      - name: Build Decrypter
+        run: cd decrypter && ./build.sh
+      - name: "[Invoked by push] Execute build docker"
+        if: ${{ github.event_name == 'push' && always() }}
+        env:
+          DRY_RUN: "true"
+        run: cd main && ./build.sh
+      - name: "[Invoked by scheduler] Execute crawler"
+        if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' && always() }}
+        env:
+          DRY_RUN: "false"
+          TARGET_URL: ${{ github.event.inputs.url_input }}
+          MAX_URL: ${{ github.event.inputs.max_urls == 'All' && '1000000' || github.event.inputs.max_urls }}
+        run: cd main && ./schedule_build.sh
