@@ -9,31 +9,16 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        env_name: [dev, pro]
-
+    environment: 'pro'
+    
     steps:
       # Checkout mã nguồn
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Thiết lập Node.js (nếu cần)
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-
-      # Thiết lập biến môi trường theo từng môi trường CI
-      - name: Set environment variables
-        run: echo "ENVIRONMENT=${{ matrix.env_name }}" >> $GITHUB_ENV
-
-      # Tải secret từ GitHub (nếu có secret riêng cho từng môi trường)
-      - name: Load secrets
+      - name: Use environment variables
         env:
-          ENVIRONMENT: ${{ matrix.env_name }}
+          SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
         run: |
-          echo "Loading secrets for $ENVIRONMENT..."
-          if [ "$ENVIRONMENT" == "dev" ]; then
-            echo "SOPS_AGE_KEY=${{ secrets.SOPS_AGE_KEY }}" >> $GITHUB_ENV
+          echo "Deploying to $ENVIRONMENT environment..."
+          echo "SOPS_AGE_KEY=$SOPS_AGE_KEY"
