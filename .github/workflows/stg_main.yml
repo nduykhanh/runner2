@@ -18,7 +18,7 @@ jobs:
 
       - name: Use environment variables
         env:
-          SOPS_AGE_KEY: ${{ variables.SOPS_AGE_KEY }}
+          SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
         run: |
           echo "Deploying to $ENVIRONMENT environment..."
           echo "SOPS_AGE_KEY=$SOPS_AGE_KEY"
