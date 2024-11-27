@@ -1,0 +1,30 @@
+name: Multi Environment CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        env_name: [dev, pro]
+
+    steps:
+      # Checkout mã nguồn
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Thiết lập Node.js (nếu cần)
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      # Thiết lập biến môi trường theo từng môi trường CI
+      - name: Set environment variables
+        run: echo "ENVIRONMENT=${{ matrix.env_name }}" >> $GITHUB_ENV
