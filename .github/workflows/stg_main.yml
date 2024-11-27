@@ -22,4 +22,5 @@ jobs:
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
         run: |
           echo "Deploying to $ENVIRONMENT environment..."
-          echo "TEST=$TEST"
+          echo "variables TEST=$TEST"
+          echo "secrtes SOPS_AGE_KEY=$SOPS_AGE_KEY"
